@@ -161,7 +161,7 @@
             padding: 1.25rem;
         }
 
-        /* GRIDS E CAMPOS */
+        /* GRIDS RESPONSIVOS (CELULAR / COMPUTADOR) */
         .grid-2 {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -511,7 +511,7 @@
         }
 
         /* ==========================================================================
-           MODAL E FORMATAÇÃO DE LAUDO A4 (EXATAMENTE 2 PÁGINAS)
+           MODAL E ARQUITETURA DE IMPRESSÃO A4 (EXATAS 2 PÁGINAS)
            ========================================================================== */
         #reportModal {
             display: none;
@@ -523,13 +523,13 @@
             background: rgba(7, 16, 38, 0.85);
             z-index: 1000;
             overflow-y: auto;
-            padding: 1.5rem 0.5rem;
+            padding: 1rem 0.5rem;
         }
 
         .modal-container {
-            max-width: 820px;
+            max-width: 840px;
             margin: 0 auto;
-            background: var(--white);
+            background: var(--gray-200);
             border-radius: var(--radius-md);
             overflow: hidden;
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
@@ -568,54 +568,51 @@
         .btn-tool-print { background: var(--navy-700); color: white; }
         .btn-tool-pdf   { background: var(--danger-red); color: white; }
 
-        /* DOCUMENTO A4 IMPRESSO / PDF */
+        /* ÁREA DE VISUALIZAÇÃO E CAPTURA DO LAUDO */
         .printable-report {
-            padding: 16px 24px;
-            color: #111;
-            font-size: 9.3pt;
-            line-height: 1.35;
-            background: white;
+            padding: 10px;
             box-sizing: border-box;
-            width: 100%;
+            background: var(--gray-200);
         }
 
+        /* FOLHA A4 PADRÃO (794px x 1120px) */
         .doc-page {
-            box-sizing: border-box;
             width: 100%;
-            background: #fff;
+            max-width: 794px;
+            min-height: 1120px;
+            max-height: 1120px;
+            margin: 0 auto 15px auto;
+            background: #ffffff;
+            box-sizing: border-box;
+            padding: 26px 32px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
             position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
         }
 
         .screen-page-divider {
             text-align: center;
-            margin: 25px 0 15px 0;
+            margin: 10px 0;
             padding: 6px;
             background: var(--navy-light);
             color: var(--navy-800);
             font-weight: 800;
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             border: 1px dashed var(--navy-600);
             border-radius: 4px;
             letter-spacing: 0.05em;
         }
 
-        /* Quebra de página estrita */
-        .html2pdf__page-break {
-            height: 0px !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            border: none !important;
-            page-break-before: always !important;
-            break-before: page !important;
-        }
-
         .doc-header {
             border-bottom: 2.5px solid var(--navy-900);
-            padding-bottom: 0.4rem;
+            padding-bottom: 0.35rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.45rem;
         }
 
         .doc-brand {
@@ -627,10 +624,10 @@
         .doc-brand-icon {
             background: var(--navy-900);
             color: white;
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             font-weight: 900;
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -638,7 +635,7 @@
         }
 
         .doc-title-area h2 {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             font-weight: 900;
             color: var(--navy-900);
             text-transform: uppercase;
@@ -646,7 +643,7 @@
         }
 
         .doc-title-area p {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             font-weight: 700;
             color: var(--danger-red);
         }
@@ -655,35 +652,35 @@
             background: var(--danger-red);
             color: var(--white);
             text-align: center;
-            padding: 0.45rem;
-            font-size: 1.05rem;
+            padding: 0.4rem;
+            font-size: 1rem;
             font-weight: 900;
             letter-spacing: 0.05em;
-            margin: 0.55rem 0;
+            margin: 0.45rem 0;
             border-radius: 4px;
         }
 
         .doc-section-title {
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 800;
             color: var(--navy-900);
             background: var(--gray-100);
             border-left: 4px solid var(--navy-800);
-            padding: 0.2rem 0.45rem;
-            margin: 0.55rem 0 0.35rem 0;
+            padding: 0.2rem 0.4rem;
+            margin: 0.45rem 0 0.3rem 0;
             text-transform: uppercase;
         }
 
         .doc-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 8.3pt;
-            margin-bottom: 0.45rem;
+            font-size: 8pt;
+            margin-bottom: 0.4rem;
         }
 
         .doc-table th, .doc-table td {
             border: 1px solid var(--gray-300);
-            padding: 0.3rem 0.45rem;
+            padding: 0.28rem 0.45rem;
             text-align: left;
         }
 
@@ -699,22 +696,22 @@
             border: 1px solid var(--gray-300);
             border-left: 4px solid var(--danger-red);
             padding: 0.45rem 0.65rem;
-            font-size: 8.3pt;
+            font-size: 8.2pt;
             text-align: justify;
-            margin-bottom: 0.45rem;
+            margin-bottom: 0.4rem;
         }
 
         .doc-defects-list {
             list-style: none;
             padding: 0;
-            margin: 0.35rem 0;
+            margin: 0.3rem 0;
         }
 
         .doc-defects-list li {
             position: relative;
             padding-left: 1.1rem;
-            margin-bottom: 0.3rem;
-            font-size: 8.3pt;
+            margin-bottom: 0.25rem;
+            font-size: 8.2pt;
             font-weight: 600;
             color: var(--danger-red-dark);
         }
@@ -727,13 +724,11 @@
             font-weight: bold;
         }
 
-        /* ==========================================================================
-           GRADE DE FOTOS EM MODO RETRATO (PROPORCIONAL E VERTICAL)
-           ========================================================================== */
+        /* GRADE FOTOGRÁFICA VERTICAL EM MODO RETRATO */
         .doc-photo-grid {
             display: grid;
-            gap: 12px;
-            margin: 0.6rem 0;
+            gap: 10px;
+            margin: 0.4rem 0;
         }
 
         .doc-photo-item {
@@ -742,7 +737,7 @@
             background: #fff;
             text-align: center;
             border-radius: 6px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
         }
@@ -756,25 +751,25 @@
         }
 
         .doc-photo-item span {
-            font-size: 7.8pt;
+            font-size: 7.5pt;
             font-weight: 800;
             color: var(--navy-900);
             display: block;
-            margin-top: 5px;
+            margin-top: 4px;
             text-transform: uppercase;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
-        /* ASSINATURA EXCLUSIVA DO TST (RODAPÉ DA PÁGINA 2) */
+        /* ASSINATURA EXCLUSIVA DO TST (RODAPÉ) */
         .doc-signature-single-wrap {
-            margin-top: 1.8rem;
+            margin-top: auto;
+            padding-top: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            page-break-inside: avoid;
         }
 
         .doc-sign-single-box {
@@ -782,8 +777,8 @@
             max-width: 90%;
             text-align: center;
             border-top: 2px solid var(--navy-900);
-            padding-top: 0.4rem;
-            font-size: 8pt;
+            padding-top: 0.35rem;
+            font-size: 7.8pt;
         }
 
         .sign-preview-img {
@@ -793,15 +788,49 @@
             margin: 0 auto 3px auto;
         }
 
+        /* AJUSTES RESPONSIVOS PARA TELAS PEQUENAS (CELULAR) */
+        @media (max-width: 640px) {
+            .grid-2, .grid-3, .grid-4 {
+                grid-template-columns: 1fr;
+            }
+            .header-titles h1 {
+                font-size: 0.95rem;
+            }
+            .header-titles p {
+                font-size: 0.72rem;
+            }
+            .badge-system {
+                display: none;
+            }
+            .doc-page {
+                padding: 16px;
+                min-height: auto;
+                max-height: none;
+            }
+        }
+
+        /* REGRAS DE IMPRESSÃO NATIVA A4 */
         @media print {
             body { background: white; padding: 0; }
             .app-header, .container, .modal-toolbar, .screen-page-divider { display: none !important; }
             #reportModal { display: block !important; position: static !important; padding: 0 !important; background: white !important; }
-            .modal-container { box-shadow: none !important; max-width: 100% !important; margin: 0 !important; }
-            .printable-report { padding: 0 !important; font-size: 9pt; }
-            .html2pdf__page-break {
-                page-break-before: always !important;
-                break-before: page !important;
+            .modal-container { box-shadow: none !important; max-width: 100% !important; margin: 0 !important; background: white !important; }
+            .printable-report { padding: 0 !important; background: white !important; }
+            .doc-page {
+                width: 100% !important;
+                max-width: 100% !important;
+                height: 277mm !important;
+                min-height: 277mm !important;
+                max-height: 277mm !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                box-shadow: none !important;
+                page-break-after: always !important;
+                break-after: page !important;
+            }
+            .doc-page:last-child {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
             }
             @page { size: A4 portrait; margin: 10mm 12mm; }
         }
@@ -1158,7 +1187,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT: BANCO INDEXEDDB, BUSCA O(1), FOTOS VERTICAIS PROPORCIONAIS -->
+    <!-- JAVASCRIPT: MOTOR COMPLETO -->
     <script>
         const defaultInventory = [
             { doc: "POA14847269", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "100989", rt: "80174148", re: "101169", executor: "HDS TELECOM", cargo: "PRESTADOR", cc: "101005-1029 OBRAS REDE - CONTRATO COMUM", tipo: "RM", qt: "-1", lancamento: "22/09/2023", base: "POÁ" },
@@ -1554,7 +1583,7 @@
         }
 
         /**
-         * GERAÇÃO DO LAUDO OFICIAL DISTRIBUINDO FOTOS VERTICAIS (MODO RETRATO) ENTRE PÁG 1 E PÁG 2
+         * GERAÇÃO DO LAUDO OFICIAL DISTRIBUINDO FOTOS VERTICAIS ENTRE PÁGINA 1 E PÁGINA 2
          */
         function openReportModal() {
             if (!hasAnyDamage()) {
@@ -1616,10 +1645,10 @@
             const signatureBlockHtml = `
                 <div class="doc-signature-single-wrap">
                     <div class="doc-sign-single-box">
-                        ${signatureImg ? `<img src="${signatureImg}" class="sign-preview-img" alt="Assinatura TST">` : '<div style="height:48px;"></div>'}
-                        <strong style="font-size:9pt; color: var(--navy-900);">${escapeHtml(tstFinal)}</strong><br>
+                        ${signatureImg ? `<img src="${signatureImg}" class="sign-preview-img" alt="Assinatura TST">` : '<div style="height:44px;"></div>'}
+                        <strong style="font-size:8.8pt; color: var(--navy-900);">${escapeHtml(tstFinal)}</strong><br>
                         <span>Técnico de Segurança do Trabalho — SESMT Responsável</span><br>
-                        <span style="color: var(--gray-700); font-size: 7.5pt;">Inspeção Pericial realizada em: ${dataFormatada} às ${inspTime}</span>
+                        <span style="color: var(--gray-700); font-size: 7.2pt;">Inspeção Pericial realizada em: ${dataFormatada} às ${inspTime}</span>
                     </div>
                 </div>
             `;
@@ -1634,7 +1663,6 @@
                 page1Photos = allEvidence;
                 page2Photos = [];
             } else {
-                // 2 fotos grandes em modo retrato na Página 1; as demais na Página 2
                 page1Photos = allEvidence.slice(0, 2);
                 page2Photos = allEvidence.slice(2);
             }
@@ -1649,14 +1677,14 @@
                     <div class="doc-header">
                         <div class="doc-brand">
                             <div class="doc-brand-icon">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M19 3L5 21M19 7L5 7M19 12L5 12M19 17L5 17"/></svg>
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M19 3L5 21M19 7L5 7M19 12L5 12M19 17L5 17"/></svg>
                             </div>
                             <div class="doc-title-area">
                                 <h2>LAUDO TÉCNICO DE REPROVAÇÃO</h2>
                                 <p>INSPEÇÃO PERICIAL DE ESCADA DE EXTENSÃO</p>
                             </div>
                         </div>
-                        <div style="text-align: right; font-size: 7.5pt; color: #334155;">
+                        <div style="text-align: right; font-size: 7.2pt; color: #334155;">
                             <p><strong>LOTE:</strong> ${escapeHtml(lote)} | <strong>DOC:</strong> ${escapeHtml(docNum)}</p>
                             <p><strong>DATA:</strong> ${dataFormatada} às ${inspTime}</p>
                             <p style="font-weight:700; color:var(--navy-900);">PÁGINA 1 DE ${totalPages}</p>
@@ -1702,7 +1730,7 @@
                     </table>
 
                     <div class="doc-section-title">2. Referências Normativas Aplicáveis</div>
-                    <div class="doc-quote-box" style="margin-bottom: 0.45rem; font-size: 8pt;">
+                    <div class="doc-quote-box">
                         Avaliação em conformidade com: <strong>ABNT NBR 16308</strong> (Escadas Portáteis - Critérios de Descarte), <strong>NR-35</strong> (Trabalho em Altura - Equipamentos de Acesso), <strong>NR-10</strong> (Segurança em Eletricidade - Rigidez Dielétrica da Fibra de Vidro) e <strong>NR-6</strong> (EPI).
                     </div>
 
@@ -1722,7 +1750,7 @@
                     </div>
             `;
 
-            // FOTOS NA PÁGINA 1 (EM MODO RETRATO: ALTURA 250PX PREENCHENDO O RESTANTE DA FOLHA)
+            // FOTOS NA PÁGINA 1 (EM MODO RETRATO: 250PX PREENCHENDO O RESTANTE DA FOLHA)
             if (page1Photos.length > 0) {
                 const p1Cols = page1Photos.length === 1 ? 1 : 2;
                 html += `
@@ -1748,44 +1776,41 @@
             // PÁGINA 2 (FOTOS RETRATO PROPORCIONAIS + ASSINATURA TST)
             // =========================================================================
             if (page2Photos.length > 0) {
-                // Cálculo de proporção para preencher a Página 2 sem deixar espaços vazios:
                 let p2Cols = 2;
                 let p2Height = "240px";
 
                 if (page2Photos.length <= 4) {
                     p2Cols = 2;
-                    p2Height = "240px"; // 4 fotos em 2x2 preenchem perfeitamente a página
+                    p2Height = "240px"; // 4 fotos verticais preenchem a página
                 } else if (page2Photos.length <= 6) {
                     p2Cols = 3;
-                    p2Height = "205px"; // 3 colunas em modo retrato equilibrado
+                    p2Height = "200px";
                 } else {
                     p2Cols = 3;
-                    p2Height = "175px";
+                    p2Height = "170px";
                 }
 
                 html += `
                     <div class="screen-page-divider">--- PÁGINA 2: CONTINUAÇÃO DO REGISTRO FOTOGRÁFICO & ASSINATURA ---</div>
 
-                    <div class="html2pdf__page-break"></div>
-
                     <div class="doc-page">
-                        <div class="doc-header" style="border-bottom-width: 2px;">
+                        <div class="doc-header">
                             <div class="doc-brand">
                                 <div class="doc-brand-icon" style="width:34px; height:34px; font-size:1rem;">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M19 3L5 21M19 7L5 7M19 12L5 12M19 17L5 17"/></svg>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M19 3L5 21M19 7L5 7M19 12L5 12M19 17L5 17"/></svg>
                                 </div>
                                 <div class="doc-title-area">
                                     <h2 style="font-size:0.95rem;">ANEXO FOTOGRÁFICO DE EVIDÊNCIAS DE AVARIAS</h2>
-                                    <p style="font-size:0.7rem;">COMPLEMENTO TÉCNICO PERICIAL — LAUDO DE REPROVAÇÃO</p>
+                                    <p style="font-size:0.68rem;">COMPLEMENTO TÉCNICO PERICIAL — LAUDO DE REPROVAÇÃO</p>
                                 </div>
                             </div>
-                            <div style="text-align: right; font-size: 7.5pt; color: #334155;">
+                            <div style="text-align: right; font-size: 7.2pt; color: #334155;">
                                 <p><strong>LOTE:</strong> ${escapeHtml(lote)} | <strong>DOC:</strong> ${escapeHtml(docNum)}</p>
                                 <p style="font-weight:700; color:var(--navy-900);">PÁGINA 2 DE 2</p>
                             </div>
                         </div>
 
-                        <div class="doc-section-title" style="margin-top:0.4rem;">6. Registro Fotográfico Detalhado das Evidências (Continuação)</div>
+                        <div class="doc-section-title">6. Registro Fotográfico Detalhado das Evidências (Continuação)</div>
                         
                         <div class="doc-photo-grid" style="grid-template-columns: repeat(${p2Cols}, 1fr);">
                             ${page2Photos.map(p => `
@@ -1812,7 +1837,7 @@
         }
 
         /**
-         * BAIXA O PDF NOMEADO COM EXATAMENTE 2 PÁGINAS (SEM FOLHAS EM BRANCO)
+         * BAIXA O PDF COM CLONE FIXO DE 794px (GARANTE EXATAMENTE 2 PÁGINAS EM QUALQUER CELULAR OU PC)
          */
         function downloadPdfDirectly() {
             const lote = document.getElementById('ladderPatrimonio').value.trim() || document.getElementById('searchLote').value.trim() || 'SEM_LOTE';
@@ -1825,27 +1850,58 @@
                 btnPdf.disabled = true;
             }
 
+            // Cria um clone invisível com largura fixa de 794px para renderização no celular sem quebras falsas
+            const clone = element.cloneNode(true);
+            clone.style.width = '794px';
+            clone.style.minWidth = '794px';
+            clone.style.maxWidth = '794px';
+            clone.style.position = 'fixed';
+            clone.style.left = '-9999px';
+            clone.style.top = '0';
+            clone.style.zIndex = '-1000';
+            clone.style.background = '#ffffff';
+            clone.style.padding = '0';
+
+            // Remove divisores visuais de tela no PDF
+            clone.querySelectorAll('.screen-page-divider').forEach(el => el.remove());
+
+            // Garante dimensões milimétricas em cada folha do clone
+            clone.querySelectorAll('.doc-page').forEach(page => {
+                page.style.width = '794px';
+                page.style.minHeight = '1120px';
+                page.style.maxHeight = '1120px';
+                page.style.boxShadow = 'none';
+                page.style.margin = '0';
+                page.style.boxSizing = 'border-box';
+                page.style.padding = '24px 32px';
+            });
+
+            document.body.appendChild(clone);
+
             const opt = {
-                margin:       [8, 10, 8, 10], // Margem A4 compacta (mm)
+                margin:       0, // Margem zero pois a folha já possui padding interno de 32px
                 filename:     `Laudo_Reprovacao_Escada_LOTE_${lote}.pdf`,
                 image:        { type: 'jpeg', quality: 0.98 },
                 html2canvas:  { 
                     scale: 2, 
                     useCORS: true, 
                     logging: false,
+                    width: 794,
+                    windowWidth: 794,
                     scrollY: 0
                 },
-                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak:    { mode: ['css', 'legacy'], before: '.html2pdf__page-break' }
+                jsPDF:        { unit: 'px', format: [794, 1120], orientation: 'portrait', hotfixes: ['px_scaling'] }
             };
 
-            html2pdf().set(opt).from(element).save().then(() => {
+            html2pdf().set(opt).from(clone).save().then(() => {
+                clone.remove();
                 if (btnPdf) {
                     btnPdf.innerHTML = originalText;
                     btnPdf.disabled = false;
                 }
             }).catch(err => {
                 console.error("Erro ao gerar PDF:", err);
+                clone.remove();
                 if (btnPdf) {
                     btnPdf.innerHTML = originalText;
                     btnPdf.disabled = false;
@@ -1866,4 +1922,3 @@
     </script>
 </body>
 </html>
-
