@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>INSPEÇÃO DE ESCADA DE EXTENSÃO</title>
+    
+    <!-- Bibliotecas CDN: Leitura de Excel (SheetJS) e Download de PDF nomeado (html2pdf) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <style>
+        /* ==========================================================================
+           PALETA DE CORES: AZUL-MARINHO CORPORATIVO, CINZAS E VERMELHO DE REPROVAÇÃO
+           ========================================================================== */
+        :root {
+            --navy-darkest: #071026;
+            --navy-900: #0f1f3d;
+            --navy-800: #1b2e56;
+            --navy-700: #254077;
+            --navy-600: #31549c;
+            --navy-light: #edf2f9;
+
+            --danger-red: #c52222;
+            --danger-red-dark: #8f1313;
+            --danger-bg: #fef2f2;
+            --danger-border: #fca5a5;
+
+            --gray-50: #f8fafc;
+            --gray-100: #f1f5f9;
+            --gray-200: #e2e8f0;
+            --gray-300: #cbd5e1;
+            --gray-500: #64748b;
+            --gray-700: #334155;
+            --gray-900: #0f172a;
+
+            --white: #ffffff;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.12);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--gray-100);
+            color: var(--gray-900);
+            line-height: 1.5;
+            padding-bottom: 70px;
+        }
+
+        /* HEADER AZUL MARINHO */
+        .app-header {
+            background: linear-gradient(135deg, var(--navy-darkest), var(--navy-800));
+            color: var(--white);
+            padding: 1.2rem 1rem;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1050px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+        }
+
+        .header-logo-group {
+            display: flex;
+            align-items: center;
+            gap: 0.9rem;
+        }
+
+        .logo-symbol {
+            background: var(--white);
+            color: var(--navy-900);
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .header-titles h1 {
+            font-size: 1.15rem;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+            text-transform: uppercase;
+        }
+
+        .header-titles p {
+            font-size: 0.8rem;
+            color: var(--gray-300);
+        }
+
+        .badge-system {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            padding: 0.35rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        /* CONTAINER E CARDS */
+        .container {
+            max-width: 1050px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: var(--radius-lg);
+            border: 1px solid var(--gray-200);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: 1.4rem;
+            overflow: hidden;
+        }
+
+        .card-header {
+            background-color: var(--white);
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 5px solid var(--navy-800);
+        }
+
+        .card-header.danger-accent {
+            border-left-color: var(--danger-red);
+        }
+
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: var(--navy-900);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .card-body {
+            padding: 1.25rem;
+        }
+
+        /* GRIDS E CAMPOS */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+        }
+
+        .grid-4 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+            gap: 1rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .form-group.full {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--navy-800);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.65rem 0.8rem;
+            font-size: 0.9rem;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            background-color: var(--white);
+            color: var(--gray-900);
+            transition: all 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--navy-700);
+            box-shadow: 0 0 0 3px rgba(37, 64, 119, 0.15);
+        }
+
+        input[readonly] {
+            background-color: var(--gray-100);
+            color: var(--gray-700);
+            font-weight: 600;
+        }
+
+        /* CAIXA DE IMPORTAÇÃO EXCEL */
+        .excel-box {
+            background: var(--navy-light);
+            border: 1px dashed var(--navy-700);
+            padding: 1rem;
+            border-radius: var(--radius-md);
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .excel-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .btn-excel {
+            background: var(--navy-800);
+            color: var(--white);
+            padding: 0.55rem 1rem;
+            border-radius: var(--radius-md);
+            font-size: 0.82rem;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-excel:hover {
+            background: var(--navy-900);
+        }
+
+        .btn-excel:disabled {
+            opacity: 0.6;
+            cursor: wait;
+        }
+
+        /* BUSCA RÁPIDA DE LOTE */
+        .search-box-wrap {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-btn {
+            background: var(--navy-800);
+            color: white;
+            border: none;
+            padding: 0 1.2rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .search-btn:hover {
+            background: var(--navy-900);
+        }
+
+        /* TOGGLE DE DECISÃO SIM / NÃO */
+        .toggle-decision {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 0.35rem;
+        }
+
+        .decision-label {
+            flex: 1;
+            cursor: pointer;
+        }
+
+        .decision-label input[type="radio"] {
+            display: none;
+        }
+
+        .decision-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            padding: 0.65rem;
+            border-radius: var(--radius-md);
+            font-weight: 700;
+            font-size: 0.88rem;
+            border: 2px solid var(--gray-300);
+            background-color: var(--white);
+            color: var(--gray-700);
+            transition: all 0.15s ease;
+            text-align: center;
+        }
+
+        .decision-label input[type="radio"]:checked + .decision-btn.btn-nao {
+            background-color: var(--gray-200);
+            border-color: var(--gray-500);
+            color: var(--navy-900);
+        }
+
+        .decision-label input[type="radio"]:checked + .decision-btn.btn-sim {
+            background-color: var(--danger-red);
+            border-color: var(--danger-red);
+            color: var(--white);
+            box-shadow: 0 3px 6px rgba(197, 34, 34, 0.3);
+        }
+
+        /* ÁREA CONDICIONAL DE AVARIAS */
+        .avaria-content {
+            display: none;
+            margin-top: 1rem;
+            padding: 1.1rem;
+            background-color: var(--danger-bg);
+            border: 1px dashed var(--danger-border);
+            border-radius: var(--radius-md);
+        }
+
+        .avaria-content.visible {
+            display: block;
+            animation: fadeIn 0.25s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* CHIPS DE TERMOS TÉCNICOS */
+        .chip-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin: 0.5rem 0;
+        }
+
+        .defect-chip {
+            background: var(--white);
+            border: 1px solid var(--danger-border);
+            color: var(--danger-red-dark);
+            padding: 0.3rem 0.65rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .defect-chip:hover {
+            background: var(--danger-red);
+            color: var(--white);
+        }
+
+        /* UPLOAD DE FOTOS COM PREVIEW */
+        .btn-upload-file {
+            width: 100%;
+            padding: 0.7rem;
+            border: 2px dashed var(--navy-700);
+            background-color: var(--white);
+            color: var(--navy-800);
+            font-weight: 700;
+            border-radius: var(--radius-md);
+            text-align: center;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.6rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-upload-file:hover {
+            background: var(--navy-light);
+        }
+
+        .photo-preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+            gap: 0.6rem;
+            margin-top: 0.6rem;
+        }
+
+        .photo-thumb-container {
+            position: relative;
+            width: 100%;
+            padding-top: 100%;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            border: 1px solid var(--gray-300);
+            background: var(--gray-200);
+        }
+
+        .photo-thumb-container img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .btn-remove-thumb {
+            position: absolute;
+            top: 3px;
+            right: 3px;
+            background: var(--danger-red);
+            color: #fff;
+            border: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: bold;
+        }
+
+        /* ASSINATURA CANVAS */
+        .signature-canvas {
+            width: 100%;
+            height: 140px;
+            background: #ffffff;
+            border: 1px solid var(--gray-300);
+            border-radius: var(--radius-md);
+            touch-action: none;
+            cursor: crosshair;
+        }
+
+        /* STATUS BANNER */
+        .status-alert-box {
+            padding: 1.1rem;
+            border-radius: var(--radius-lg);
+            margin-bottom: 1.4rem;
+            text-align: center;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .status-alert-box.no-damage {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .status-alert-box.reproved {
+            background: var(--danger-red);
+            color: var(--white);
+            box-shadow: 0 4px 10px rgba(197, 34, 34, 0.25);
+        }
+
+        /* PAINEL DE BOTÕES */
+        .actions-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.9rem 1.6rem;
+            font-size: 0.95rem;
+            font-weight: 800;
+            border-radius: var(--radius-md);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+        }
+
+        .btn-danger {
+            background: var(--danger-red);
+            color: var(--white);
+        }
+
+        .btn-danger:hover:not(:disabled) {
+            background: var(--danger-red-dark);
+            transform: translateY(-2px);
+        }
+
+        .btn:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+
+        /* ==========================================================================
+           MODAL E FORMATAÇÃO DE LAUDO A4 (EXATAMENTE 2 PÁGINAS)
+           ========================================================================== */
+        #reportModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(7, 16, 38, 0.85);
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 1.5rem 0.5rem;
+        }
+
+        .modal-container {
+            max-width: 820px;
+            margin: 0 auto;
+            background: var(--white);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-toolbar {
+            background: var(--navy-900);
+            color: var(--white);
+            padding: 0.8rem 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 20;
+        }
+
+        .modal-toolbar-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-tool {
+            padding: 0.5rem 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 700;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-tool-close { background: var(--gray-700); color: white; }
+        .btn-tool-print { background: var(--navy-700); color: white; }
+        .btn-tool-pdf   { background: var(--danger-red); color: white; }
+
+        /* DOCUMENTO A4 IMPRESSO / PDF */
+        .printable-report {
+            padding: 16px 24px;
+            color: #111;
+            font-size: 9.3pt;
+            line-height: 1.35;
+            background: white;
+            box-sizing: border-box;
+            width: 100%;
+        }
+
+        .doc-page {
+            box-sizing: border-box;
+            width: 100%;
+            background: #fff;
+            position: relative;
+        }
+
+        .screen-page-divider {
+            text-align: center;
+            margin: 25px 0 15px 0;
+            padding: 6px;
+            background: var(--navy-light);
+            color: var(--navy-800);
+            font-weight: 800;
+            font-size: 0.75rem;
+            border: 1px dashed var(--navy-600);
+            border-radius: 4px;
+            letter-spacing: 0.05em;
+        }
+
+        /* Quebra de página estrita */
+        .html2pdf__page-break {
+            height: 0px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            border: none !important;
+            page-break-before: always !important;
+            break-before: page !important;
+        }
+
+        .doc-header {
+            border-bottom: 2.5px solid var(--navy-900);
+            padding-bottom: 0.4rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .doc-brand {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+
+        .doc-brand-icon {
+            background: var(--navy-900);
+            color: white;
+            width: 40px;
+            height: 40px;
+            font-weight: 900;
+            font-size: 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .doc-title-area h2 {
+            font-size: 1.15rem;
+            font-weight: 900;
+            color: var(--navy-900);
+            text-transform: uppercase;
+            line-height: 1.1;
+        }
+
+        .doc-title-area p {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--danger-red);
+        }
+
+        .doc-reproval-banner {
+            background: var(--danger-red);
+            color: var(--white);
+            text-align: center;
+            padding: 0.45rem;
+            font-size: 1.05rem;
+            font-weight: 900;
+            letter-spacing: 0.05em;
+            margin: 0.55rem 0;
+            border-radius: 4px;
+        }
+
+        .doc-section-title {
+            font-size: 0.82rem;
+            font-weight: 800;
+            color: var(--navy-900);
+            background: var(--gray-100);
+            border-left: 4px solid var(--navy-800);
+            padding: 0.2rem 0.45rem;
+            margin: 0.55rem 0 0.35rem 0;
+            text-transform: uppercase;
+        }
+
+        .doc-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8.3pt;
+            margin-bottom: 0.45rem;
+        }
+
+        .doc-table th, .doc-table td {
+            border: 1px solid var(--gray-300);
+            padding: 0.3rem 0.45rem;
+            text-align: left;
+        }
+
+        .doc-table th {
+            background: var(--gray-100);
+            color: var(--navy-900);
+            font-weight: 800;
+            width: 22%;
+        }
+
+        .doc-quote-box {
+            background: var(--gray-50);
+            border: 1px solid var(--gray-300);
+            border-left: 4px solid var(--danger-red);
+            padding: 0.45rem 0.65rem;
+            font-size: 8.3pt;
+            text-align: justify;
+            margin-bottom: 0.45rem;
+        }
+
+        .doc-defects-list {
+            list-style: none;
+            padding: 0;
+            margin: 0.35rem 0;
+        }
+
+        .doc-defects-list li {
+            position: relative;
+            padding-left: 1.1rem;
+            margin-bottom: 0.3rem;
+            font-size: 8.3pt;
+            font-weight: 600;
+            color: var(--danger-red-dark);
+        }
+
+        .doc-defects-list li::before {
+            content: "✖";
+            position: absolute;
+            left: 0;
+            color: var(--danger-red);
+            font-weight: bold;
+        }
+
+        /* ==========================================================================
+           GRADE DE FOTOS EM MODO RETRATO (PROPORCIONAL E VERTICAL)
+           ========================================================================== */
+        .doc-photo-grid {
+            display: grid;
+            gap: 12px;
+            margin: 0.6rem 0;
+        }
+
+        .doc-photo-item {
+            border: 1.5px solid var(--gray-300);
+            padding: 5px;
+            background: #fff;
+            text-align: center;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .doc-photo-item img {
+            width: 100%;
+            object-fit: cover;
+            border-radius: 4px;
+            display: block;
+            background-color: #f1f5f9;
+        }
+
+        .doc-photo-item span {
+            font-size: 7.8pt;
+            font-weight: 800;
+            color: var(--navy-900);
+            display: block;
+            margin-top: 5px;
+            text-transform: uppercase;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* ASSINATURA EXCLUSIVA DO TST (RODAPÉ DA PÁGINA 2) */
+        .doc-signature-single-wrap {
+            margin-top: 1.8rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            page-break-inside: avoid;
+        }
+
+        .doc-sign-single-box {
+            width: 380px;
+            max-width: 90%;
+            text-align: center;
+            border-top: 2px solid var(--navy-900);
+            padding-top: 0.4rem;
+            font-size: 8pt;
+        }
+
+        .sign-preview-img {
+            max-height: 48px;
+            max-width: 100%;
+            display: block;
+            margin: 0 auto 3px auto;
+        }
+
+        @media print {
+            body { background: white; padding: 0; }
+            .app-header, .container, .modal-toolbar, .screen-page-divider { display: none !important; }
+            #reportModal { display: block !important; position: static !important; padding: 0 !important; background: white !important; }
+            .modal-container { box-shadow: none !important; max-width: 100% !important; margin: 0 !important; }
+            .printable-report { padding: 0 !important; font-size: 9pt; }
+            .html2pdf__page-break {
+                page-break-before: always !important;
+                break-before: page !important;
+            }
+            @page { size: A4 portrait; margin: 10mm 12mm; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- CABEÇALHO AZUL-MARINHO -->
+    <header class="app-header">
+        <div class="header-content">
+            <div class="header-logo-group">
+                <div class="logo-symbol">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M19 3L5 21M19 7L5 7M19 12L5 12M19 17L5 17"/></svg>
+                </div>
+                <div class="header-titles">
+                    <h1>INSPEÇÃO DE ESCADA DE EXTENSÃO</h1>
+                    <p>Laudo de Reprovação de Escadas de Fibra</p>
+                </div>
+            </div>
+            <div class="badge-system">SESMT / SEGURANÇA DO TRABALHO</div>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <!-- STATUS EM TEMPO REAL -->
+        <div id="statusBanner" class="status-alert-box no-damage">
+            NENHUMA AVARIA APONTADA — EMISSÃO DE LAUDO BLOQUEADA
+        </div>
+
+        <!-- PAINEL DE INTEGRAÇÃO EXCEL (INDEXEDDB - SUPORTA 7.000+ LINHAS) -->
+        <div class="excel-box">
+            <div class="excel-info">
+                <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <div>
+                    <strong style="color:var(--navy-900); font-size: 0.9rem;">Banco de Dados de Inventário das Escadas</strong>
+                    <div id="dbStatusText" style="font-size: 0.78rem; color: var(--navy-800);">Iniciando banco de dados offline...</div>
+                </div>
+            </div>
+            <div>
+                <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display: none;" onchange="importExcelFile(event)">
+                <button type="button" id="btnUploadExcel" class="btn-excel" onclick="document.getElementById('excelFileInput').click()">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                    Importar Nova Planilha (.xlsx)
+                </button>
+            </div>
+        </div>
+
+        <form id="inspectionForm" onsubmit="event.preventDefault();">
+
+            <!-- CARTÃO 1: BUSCA DE LOTE E DADOS VINCULADOS DO INVENTÁRIO -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                        Localização da Escada por LOTE (Inventário)
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="grid-3" style="align-items: flex-end;">
+                        <div class="form-group">
+                            <label for="searchLote">DIGITE O LOTE (COLUNA D DA PLANILHA)</label>
+                            <div class="search-box-wrap">
+                                <input type="text" id="searchLote" placeholder="Ex: 100999, 101059..." oninput="autoSearchLadder()" autocomplete="off">
+                                <button type="button" class="search-btn" onclick="searchLadderByLote()">Buscar</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Documento (Coluna A)</label>
+                            <input type="text" id="docNumero" readonly placeholder="Aguardando Lote...">
+                        </div>
+                        <div class="form-group">
+                            <label>Base Operacional (Coluna M)</label>
+                            <input type="text" id="baseName" readonly value="ITAQUERA">
+                        </div>
+                    </div>
+
+                    <div class="grid-4" style="margin-top: 1rem;">
+                        <div class="form-group">
+                            <label>RE Responsável (Coluna F)</label>
+                            <input type="text" id="respRE" readonly placeholder="-">
+                        </div>
+                        <div class="form-group">
+                            <label>Executor / Colaborador (Coluna G)</label>
+                            <input type="text" id="respExecutor" readonly placeholder="-">
+                        </div>
+                        <div class="form-group">
+                            <label>Cargo do Executor (Coluna H)</label>
+                            <input type="text" id="respCargo" readonly placeholder="-">
+                        </div>
+                        <div class="form-group">
+                            <label>Lançamento / Entrega (Coluna L)</label>
+                            <input type="text" id="dataLancamento" readonly placeholder="-">
+                        </div>
+                        <div class="form-group full">
+                            <label>Centro de Custo (Coluna I)</label>
+                            <input type="text" id="centroCusto" readonly placeholder="-">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARTÃO 2: PARÂMETROS TÉCNICOS & NORMATIVOS -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Parâmetros Técnicos & Normativos</span>
+                </div>
+                <div class="card-body">
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label>Descrição do Equipamento</label>
+                            <input type="text" id="ladderDesc" value="ESCADA DUPLA DE FIBRA 3.60X6.00 M" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Capacidade Nominal de Carga</label>
+                            <input type="text" id="ladderCapacity" value="120 kg" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label>Configuração dos Degraus</label>
+                            <input type="text" id="totalDegrausFixos" value="Total de 20 Degraus (Dupla)" readonly>
+                        </div>
+                        <div class="form-group full">
+                            <label>Normas Regulamentadoras e Técnicas Aplicáveis</label>
+                            <input type="text" readonly value="ABNT NBR 16308 (Escadas Portáteis) • NR-35 (Trabalho em Altura) • NR-10 (Segurança Elétrica) • NR-6 (EPI)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARTÃO 3: DADOS DA INSPEÇÃO E RESPONSÁVEL TÉCNICO -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Dados da Inspeção e TST Responsável</span>
+                </div>
+                <div class="card-body">
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label for="inspectionDate">Data da Inspeção</label>
+                            <input type="date" id="inspectionDate" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="inspectionTime">Horário de Início</label>
+                            <input type="time" id="inspectionTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="selectTST">Técnico de Segurança (TST)</label>
+                            <select id="selectTST" onchange="toggleCustomTST()">
+                                <option value="JONE GONZAGA DE SENA MTE – 0096441/SP">JONE GONZAGA DE SENA MTE – 0096441/SP</option>
+                                <option value="OUTRO">OUTRO TST (DIGITAR NOME / REGISTRO)</option>
+                            </select>
+                        </div>
+                        <div class="form-group full" id="groupCustomTST" style="display: none;">
+                            <label for="customTST">Nome Completo e Registro MTE do TST</label>
+                            <input type="text" id="customTST" placeholder="Digite o nome completo e MTE do TST responsável">
+                        </div>
+                        <div class="form-group full">
+                            <label>Endereço Fixo da Base Operacional</label>
+                            <input type="text" id="baseAddress" value="Rua Agrimensor Sugaya, 400" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 1: PATRIMÔNIO / IDENTIFICAÇÃO -->
+            <div class="card">
+                <div class="card-header danger-accent">
+                    <span class="card-title">SEÇÃO 1 — Patrimônio / Plaqueta de Identificação</span>
+                </div>
+                <div class="card-body">
+                    <div class="grid-2">
+                        <div class="form-group">
+                            <label>Número do Patrimônio / Lote</label>
+                            <input type="text" id="ladderPatrimonio" placeholder="Número obtido da busca ou digite manual" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Possui Avaria / Ilegibilidade no Patrimônio?</label>
+                            <div class="toggle-decision">
+                                <label class="decision-label">
+                                    <input type="radio" name="avaria_patrimonio" value="nao" checked onchange="toggleDamageSection('patrimonio', false)">
+                                    <span class="decision-btn btn-nao">NÃO</span>
+                                </label>
+                                <label class="decision-label">
+                                    <input type="radio" name="avaria_patrimonio" value="sim" onchange="toggleDamageSection('patrimonio', true)">
+                                    <span class="decision-btn btn-sim">SIM</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="content_patrimonio" class="avaria-content">
+                        <label>Termos Técnicos Rápidos (Clique para inserir):</label>
+                        <div class="chip-container">
+                            <span class="defect-chip" onclick="addChipText('desc_patrimonio', 'Plaqueta metálica de patrimônio arrancada/inexistente.')">+ Plaqueta Arrancada</span>
+                            <span class="defect-chip" onclick="addChipText('desc_patrimonio', 'Gravação do lote totalmente ilegível por abrasão.')">+ Ilegível / Abrasão</span>
+                            <span class="defect-chip" onclick="addChipText('desc_patrimonio', 'Código adulterado ou com dupla identificação conflitante.')">+ Identificação Conflitante</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="desc_patrimonio">Descrição Técnica da Avaria no Patrimônio</label>
+                            <textarea id="desc_patrimonio" placeholder="Detalhe a avaria da identificação..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Evidência Fotográfica (Até 5 Fotos)</label>
+                            <label class="btn-upload-file">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                Adicionar Fotos do Patrimônio
+                                <input type="file" accept="image/*" multiple style="display:none;" onchange="handlePhotoUpload(event, 'patrimonio')">
+                            </label>
+                            <div class="photo-preview-grid" id="grid_photos_patrimonio"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 2: DEGRAUS (20 DEGRAUS) -->
+            <div class="card">
+                <div class="card-header danger-accent">
+                    <span class="card-title">SEÇÃO 2 — Degraus (Total de 20 Degraus)</span>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Degraus apresentam trinca, deformação estrutural, folga ou rebite rompido?</label>
+                        <div class="toggle-decision">
+                            <label class="decision-label">
+                                <input type="radio" name="avaria_degraus" value="nao" checked onchange="toggleDamageSection('degraus', false)">
+                                <span class="decision-btn btn-nao">NÃO</span>
+                            </label>
+                            <label class="decision-label">
+                                <input type="radio" name="avaria_degraus" value="sim" onchange="toggleDamageSection('degraus', true)">
+                                <span class="decision-btn btn-sim">SIM</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="content_degraus" class="avaria-content">
+                        <div class="grid-2">
+                            <div class="form-group">
+                                <label for="qtd_degraus_avariados">Quantidade de Degraus Avariados (de 1 a 20)</label>
+                                <input type="number" id="qtd_degraus_avariados" min="1" max="20" placeholder="Ex: 3">
+                            </div>
+                            <div class="form-group">
+                                <label>Termos Técnicos Rápidos:</label>
+                                <div class="chip-container">
+                                    <span class="defect-chip" onclick="addChipText('desc_degraus', 'Degraus com amassamento e deformação plástica pronunciada.')">+ Deformação Plástica</span>
+                                    <span class="defect-chip" onclick="addChipText('desc_degraus', 'Rebites de fixação rompidos e degraus com folga axial.')">+ Rebite Rompido</span>
+                                    <span class="defect-chip" onclick="addChipText('desc_degraus', 'Ranhuras antiderrapantes totalmente desgastadas, gerando risco iminente de escorregamento.')">+ Antiderrapante Gasto</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-top: 0.5rem;">
+                            <label for="desc_degraus">Descrição Técnica das Avarias nos Degraus</label>
+                            <textarea id="desc_degraus" placeholder="Detalhe os degraus afetados e os riscos operacionais..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Evidência Fotográfica dos Degraus (Até 5 Fotos)</label>
+                            <label class="btn-upload-file">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                Adicionar Fotos dos Degraus
+                                <input type="file" accept="image/*" multiple style="display:none;" onchange="handlePhotoUpload(event, 'degraus')">
+                            </label>
+                            <div class="photo-preview-grid" id="grid_photos_degraus"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 3: MONTANTES DE FIBRA -->
+            <div class="card">
+                <div class="card-header danger-accent">
+                    <span class="card-title">SEÇÃO 3 — Estrutura dos Montantes de Fibra de Vidro</span>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Os perfis de fibra de vidro apresentam trincas, delaminação, lascas ou contato com arco elétrico?</label>
+                        <div class="toggle-decision">
+                            <label class="decision-label">
+                                <input type="radio" name="avaria_montantes" value="nao" checked onchange="toggleDamageSection('montantes', false)">
+                                <span class="decision-btn btn-nao">NÃO</span>
+                            </label>
+                            <label class="decision-label">
+                                <input type="radio" name="avaria_montantes" value="sim" onchange="toggleDamageSection('montantes', true)">
+                                <span class="decision-btn btn-sim">SIM</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div id="content_montantes" class="avaria-content">
+                        <label>Termos Técnicos Rápidos:</label>
+                        <div class="chip-container">
+                            <span class="defect-chip" onclick="addChipText('desc_montantes', 'Delaminação severa dos perfis longitudinais com fibras expostas.')">+ Delaminação de Fibras</span>
+                            <span class="defect-chip" onclick="addChipText('desc_montantes', 'Trinca longitudinal passante comprometendo a rigidez mecânica.')">+ Trinca Longitudinal</span>
+                            <span class="defect-chip" onclick="addChipText('desc_montantes', 'Ponto de carbonização / queima por arco elétrico com perda de isolamento dielétrico.')">+ Queima / Arco Elétrico</span>
+                            <span class="defect-chip" onclick="addChipText('desc_montantes', 'Sapatas antiderrapantes de borracha ausentes/rasgadas.')">+ Sapatas Danificadas</span>
+                        </div>
+                        <div class="form-group">
+                            <label for="desc_montantes">Descrição Técnica da Avaria nos Montantes de Fibra</label>
+                            <textarea id="desc_montantes" placeholder="Detalhe as trincas, delaminação e perda de isolamento..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Evidência Fotográfica dos Montantes (Até 5 Fotos)</label>
+                            <label class="btn-upload-file">
+                                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                Adicionar Fotos dos Montantes
+                                <input type="file" accept="image/*" multiple style="display:none;" onchange="handlePhotoUpload(event, 'montantes')">
+                            </label>
+                            <div class="photo-preview-grid" id="grid_photos_montantes"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEÇÃO 4: ASSINATURA DIGITAL DO TST -->
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-title">Assinatura Digital do Técnico Responsável (TST)</span>
+                </div>
+                <div class="card-body">
+                    <p style="font-size: 0.8rem; color: var(--gray-500); margin-bottom: 0.5rem;">
+                        Assine na área abaixo com o dedo (celular/tablet) ou mouse (computador):
+                    </p>
+                    <canvas id="signatureCanvas" class="signature-canvas"></canvas>
+                    <div style="display: flex; justify-content: flex-end; margin-top: 0.4rem;">
+                        <button type="button" class="btn-tool btn-tool-close" onclick="clearSignature()">Limpar Assinatura</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTÃO PRINCIPAL -->
+            <div class="actions-panel">
+                <button type="button" id="btnGerarLaudo" class="btn btn-danger" onclick="openReportModal()" disabled>
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                    Gerar Laudo de Reprovação
+                </button>
+            </div>
+
+        </form>
+    </main>
+
+    <!-- MODAL DO LAUDO PRONTO PARA IMPRESSÃO / SALVAR EM PDF (EXATAMENTE 2 PÁGINAS A4) -->
+    <div id="reportModal">
+        <div class="modal-container">
+            <div class="modal-toolbar">
+                <h3 style="font-size:0.9rem; text-transform:uppercase;">Laudo Oficial Formatado (Padrão A4 - 2 Páginas)</h3>
+                <div class="modal-toolbar-btns">
+                    <button type="button" class="btn-tool btn-tool-close" onclick="closeReportModal()">Voltar / Editar</button>
+                    <button type="button" class="btn-tool btn-tool-print" onclick="window.print()">Imprimir Relatório</button>
+                    <button type="button" class="btn-tool btn-tool-pdf" id="btnPdfModal" onclick="downloadPdfDirectly()">Salvar em PDF</button>
+                </div>
+            </div>
+
+            <!-- CONTEÚDO IMPRESSO NO A4 -->
+            <div class="printable-report" id="printableReportArea">
+                <!-- Gerado dinamicamente via JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT: BANCO INDEXEDDB, BUSCA O(1), FOTOS VERTICAIS PROPORCIONAIS -->
+    <script>
+        const defaultInventory = [
+            { doc: "POA14847269", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "100989", rt: "80174148", re: "101169", executor: "HDS TELECOM", cargo: "PRESTADOR", cc: "101005-1029 OBRAS REDE - CONTRATO COMUM", tipo: "RM", qt: "-1", lancamento: "22/09/2023", base: "POÁ" },
+            { doc: "VGE14486697", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "100998", rt: "80628523", re: "31924", executor: "JOSE CARLOS RIBEIRO DA SILVA FILHO", cargo: "SUPERVISOR DE FTTX", cc: "101001 1017 CONTRATO SUL - FTTO", tipo: "RM", qt: "-1", lancamento: "03/04/2023", base: "VILA GUILHERME" },
+            { doc: "ITA13740218", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "100999", rt: "80200799", re: "43209", executor: "DIEGO BATISTA FERREIRA", cargo: "LIDER DE REDE", cc: "101032 3211 HUAWEI REDE - HUAWEI MANUT REDE TIM SP", tipo: "RM", qt: "-1", lancamento: "18/04/2022", base: "ITAQUERA" },
+            { doc: "VGE11808004", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101059", rt: "80170001", re: "18112", executor: "ALEXANDER BIZARRO LACERDA", cargo: "TECNICO LP DADOS", cc: "101007 1023 CONTRATO IP/COJB - LP DE DADOS", tipo: "RM", qt: "-1", lancamento: "25/03/2021", base: "VILA GUILHERME" },
+            { doc: "VGE11808006", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101060", rt: "80183351", re: "18936", executor: "SERGIO BARROS DA SILVA", cargo: "ANALISTA DE LP DADOS", cc: "101002 1023 CONTRATO LESTE - LP DE DADOS", tipo: "RM", qt: "-1", lancamento: "25/03/2021", base: "VILA GUILHERME" },
+            { doc: "VGE13535781", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101067", rt: "80625907", re: "31728", executor: "MARCUS VINICIUS ARAUJO PRUDENTE", cargo: "SUPERVISOR DE FTTX", cc: "101001 1017 CONTRATO SUL - FTTO", tipo: "RM", qt: "-1", lancamento: "29/12/2021", base: "VILA GUILHERME" },
+            { doc: "VGE14750392", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101088", rt: "80771532", re: "39676", executor: "EMERSON ELTON PEREIRA DA SILVA", cargo: "MULTI SKILL OPT CON", cc: "101002 1017 CONTRATO LESTE - FTTO", tipo: "RM", qt: "-1", lancamento: "09/08/2023", base: "VILA GUILHERME" },
+            { doc: "VGE12600500", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101098", rt: "100706", re: "100706", executor: "AJ TELECOM - JOÃO RODRIGUES DE MATTA NETO", cargo: "PRESTADOR", cc: "101005-1029 OBRAS REDE - CONTRATO COMUM", tipo: "RM", qt: "-1", lancamento: "14/06/2021", base: "VILA GUILHERME" },
+            { doc: "VGE13584641", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101149", rt: "7470754", re: "36603", executor: "ADRIANO FERREIRA BARROS", cargo: "AUX TELECOM", cc: "101005 1029 COMUM SUL/LESTE/ABC/AT - OBRAS REDE", tipo: "RM", qt: "-1", lancamento: "28/01/2022", base: "VILA GUILHERME" },
+            { doc: "VGE11877658", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101171", rt: "80780542", re: "40559", executor: "KENNEDY DE ARAUJO", cargo: "MULTI SKILL OPT CON", cc: "101002 1017 CONTRATO LESTE - FTTO", tipo: "RM", qt: "-1", lancamento: "31/03/2021", base: "VILA GUILHERME" },
+            { doc: "VGE15171543", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101214", rt: "80776000", re: "40055", executor: "LEANDRO PEREIRA DA SILVA", cargo: "MULTI SKILL OPT CON", cc: "101002 1017 CONTRATO LESTE - FTTO", tipo: "RM", qt: "-1", lancamento: "06/03/2024", base: "VILA GUILHERME" },
+            { doc: "JUA15599909", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101267", rt: "80609775", re: "30886", executor: "CARLOS ALBERTO DA SILVA RODRIGUES", cargo: "MULTI SKILL OPT CON", cc: "101007 1017 CONTRATO IP/COJB - FTTO", tipo: "RM", qt: "-1", lancamento: "04/10/2024", base: "JURUBATUBA" },
+            { doc: "ITA11799351", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101326", rt: "80193153", re: "12082", executor: "RAFAEL MARTINELLI DA SILVA", cargo: "GERENTE REG TELECOM", cc: "101005 1028 COMUM SUL/LESTE/ABC/AT - MANUTENCAO DE FIBRA OPTICA", tipo: "RM", qt: "-1", lancamento: "25/03/2021", base: "ITAQUERA" },
+            { doc: "VGE16595414", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101336", rt: "80276901", re: "54913", executor: "HUDSON GONCALVES RIBEIRO DE OLIVEIRA", cargo: "CABISTA F OPTICA", cc: "101005 1028 COMUM SUL/LESTE/ABC/AT - MANUTENCAO DE FIBRA OPTICA", tipo: "RM", qt: "-1", lancamento: "26/03/2026", base: "VILA GUILHERME" },
+            { doc: "ITA15333041", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101338", rt: "80183471", re: "18475", executor: "JEREMIAS SANTOS DE SOUZA", cargo: "TECNICO LP DADOS", cc: "101002 1023 CONTRATO LESTE - LP DE DADOS", tipo: "RM", qt: "-1", lancamento: "23/05/2024", base: "ITAQUERA" },
+            { doc: "VGE16716431", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101339", rt: "80836819", re: "43216", executor: "CAIO QUEIROZ BARRETO", cargo: "FISCAL DE MANUT FTTX", cc: "101032 3211 HUAWEI REDE - HUAWEI MANUT REDE TIM SP", tipo: "RM", qt: "-1", lancamento: "03/06/2026", base: "VILA GUILHERME" },
+            { doc: "ITA16925383", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101340", rt: "80840524", re: "43283", executor: "GUSTAVO DA CRUZ LIMA", cargo: "MULTI SKILL OPT CON", cc: "101005 1028 COMUM SUL/LESTE/ABC/AT - MANUTENCAO DE FIBRA OPTICA", tipo: "DM", qt: "1", lancamento: "01/10/2026", base: "ITAQUERA" },
+            { doc: "POA14098462", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "101370", rt: "80174148", re: "101169", executor: "HDS TELECOM", cargo: "PRESTADOR", cc: "101005-1029 OBRAS REDE - CONTRATO COMUM", tipo: "RM", qt: "-1", lancamento: "10/10/2022", base: "POÁ" }
+        ];
+
+        const inventoryMap = new Map();
+
+        const statePhotos = {
+            patrimonio: [],
+            degraus: [],
+            montantes: []
+        };
+
+        const DB_NAME = 'SESMT_ESCADAS_DB';
+        const DB_VERSION = 1;
+        const STORE_NAME = 'inventario_store';
+
+        function openIndexedDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(DB_NAME, DB_VERSION);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(STORE_NAME)) {
+                        db.createObjectStore(STORE_NAME);
+                    }
+                };
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        async function saveInventoryToDB(dataArray) {
+            const db = await openIndexedDB();
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(STORE_NAME, 'readwrite');
+                const store = tx.objectStore(STORE_NAME);
+                store.put(dataArray, 'lista_completa');
+                tx.oncomplete = () => resolve();
+                tx.onerror = () => reject(tx.error);
+            });
+        }
+
+        async function loadInventoryFromDB() {
+            const db = await openIndexedDB();
+            return new Promise((resolve) => {
+                const tx = db.transaction(STORE_NAME, 'readonly');
+                const store = tx.objectStore(STORE_NAME);
+                const req = store.get('lista_completa');
+                req.onsuccess = () => resolve(req.result || null);
+                req.onerror = () => resolve(null);
+            });
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            try { localStorage.removeItem('INVENTARIO_ESCADAS_SESMT'); } catch(e){}
+
+            await initDatabase();
+
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inspectionDate').value = today;
+
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            document.getElementById('inspectionTime').value = `${hh}:${mm}`;
+
+            initSignatureCanvas();
+            updateReprovalState();
+        });
+
+        async function initDatabase() {
+            const statusLabel = document.getElementById('dbStatusText');
+            try {
+                const storedList = await loadInventoryFromDB();
+                if (storedList && Array.isArray(storedList) && storedList.length > 0) {
+                    populateInventoryMap(storedList);
+                    statusLabel.textContent = `Base Ativa: ${storedList.length.toLocaleString('pt-BR')} escadas carregadas (IndexedDB).`;
+                } else {
+                    populateInventoryMap(defaultInventory);
+                    statusLabel.textContent = `Base Ativa: ${defaultInventory.length} escadas pré-carregadas.`;
+                }
+            } catch (err) {
+                console.error("Erro ao carregar IndexedDB:", err);
+                populateInventoryMap(defaultInventory);
+                statusLabel.textContent = `Base Ativa: ${defaultInventory.length} escadas pré-carregadas.`;
+            }
+        }
+
+        function populateInventoryMap(list) {
+            inventoryMap.clear();
+            for (let i = 0; i < list.length; i++) {
+                const item = list[i];
+                if (item && item.lote) {
+                    inventoryMap.set(String(item.lote).trim().toUpperCase(), item);
+                }
+            }
+        }
+
+        async function importExcelFile(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const statusLabel = document.getElementById('dbStatusText');
+            const btnUpload = document.getElementById('btnUploadExcel');
+
+            statusLabel.textContent = "Processando planilha... Aguarde alguns instantes.";
+            btnUpload.disabled = true;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array', cellDates: true, dateNF: 'dd/mm/yyyy' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet, { header: 1, raw: false });
+
+                    if (!json || json.length < 2) {
+                        alert("A planilha selecionada está vazia ou ilegível.");
+                        btnUpload.disabled = false;
+                        return;
+                    }
+
+                    const parsedList = [];
+                    for (let i = 1; i < json.length; i++) {
+                        const row = json[i];
+                        if (!row || !row[3]) continue;
+
+                        parsedList.push({
+                            doc: String(row[0] || '').trim(),
+                            produto: String(row[1] || '').trim(),
+                            desc: String(row[2] || 'ESCADA DUPLA DE FIBRA 3.60X6.00 M').trim(),
+                            lote: String(row[3] || '').trim(),
+                            rt: String(row[4] || '').trim(),
+                            re: String(row[5] || '').trim(),
+                            executor: String(row[6] || '').trim(),
+                            cargo: String(row[7] || '').trim(),
+                            cc: String(row[8] || '').trim(),
+                            tipo: String(row[9] || '').trim(),
+                            qt: String(row[10] || '').trim(),
+                            lancamento: String(row[11] || '').trim(),
+                            base: String(row[12] || 'ITAQUERA').trim()
+                        });
+                    }
+
+                    if (parsedList.length === 0) {
+                        alert("Não foram encontrados dados válidos na Coluna D (Lote). Verifique a planilha.");
+                        btnUpload.disabled = false;
+                        return;
+                    }
+
+                    await saveInventoryToDB(parsedList);
+                    populateInventoryMap(parsedList);
+
+                    statusLabel.textContent = `Base Atualizada: ${parsedList.length.toLocaleString('pt-BR')} escadas salvas com sucesso!`;
+                    alert(`Sucesso! ${parsedList.length.toLocaleString('pt-BR')} escadas foram importadas.`);
+                } catch (err) {
+                    console.error(err);
+                    alert("Erro ao processar arquivo: " + err.message);
+                    statusLabel.textContent = "Erro na importação.";
+                } finally {
+                    btnUpload.disabled = false;
+                    event.target.value = '';
+                }
+            };
+
+            reader.readAsArrayBuffer(file);
+        }
+
+        function searchLadderByLote() {
+            const inputVal = document.getElementById('searchLote').value.trim().toUpperCase();
+            if (!inputVal) {
+                alert("Por favor, digite o número do Lote da escada.");
+                return;
+            }
+
+            const item = inventoryMap.get(inputVal);
+
+            if (item) {
+                document.getElementById('docNumero').value = item.doc;
+                document.getElementById('ladderPatrimonio').value = item.lote;
+                document.getElementById('respRE').value = item.re;
+                document.getElementById('respExecutor').value = item.executor;
+                document.getElementById('respCargo').value = item.cargo;
+                document.getElementById('centroCusto').value = item.cc;
+                document.getElementById('dataLancamento').value = item.lancamento;
+                document.getElementById('baseName').value = item.base || 'ITAQUERA';
+                if (item.desc) document.getElementById('ladderDesc').value = item.desc;
+            } else {
+                alert(`Lote "${inputVal}" não foi localizado entre as ${inventoryMap.size.toLocaleString('pt-BR')} escadas cadastradas. Você pode preencher manualmente.`);
+                document.getElementById('ladderPatrimonio').value = inputVal;
+            }
+        }
+
+        function autoSearchLadder() {
+            const val = document.getElementById('searchLote').value.trim().toUpperCase();
+            if (val.length >= 6) {
+                const item = inventoryMap.get(val);
+                if (item) searchLadderByLote();
+            }
+        }
+
+        function toggleCustomTST() {
+            const sel = document.getElementById('selectTST').value;
+            const group = document.getElementById('groupCustomTST');
+            if (sel === 'OUTRO') {
+                group.style.display = 'block';
+                document.getElementById('customTST').focus();
+            } else {
+                group.style.display = 'none';
+                document.getElementById('customTST').value = '';
+            }
+        }
+
+        function addChipText(textareaId, phrase) {
+            const area = document.getElementById(textareaId);
+            if (area.value.trim().length > 0) {
+                area.value += " " + phrase;
+            } else {
+                area.value = phrase;
+            }
+            area.focus();
+        }
+
+        function toggleDamageSection(secId, hasDamage) {
+            const box = document.getElementById(`content_${secId}`);
+            if (hasDamage) {
+                box.classList.add('visible');
+            } else {
+                box.classList.remove('visible');
+            }
+            updateReprovalState();
+        }
+
+        function hasAnyDamage() {
+            const s1 = document.querySelector('input[name="avaria_patrimonio"]:checked')?.value === 'sim';
+            const s2 = document.querySelector('input[name="avaria_degraus"]:checked')?.value === 'sim';
+            const s3 = document.querySelector('input[name="avaria_montantes"]:checked')?.value === 'sim';
+            return (s1 || s2 || s3);
+        }
+
+        function updateReprovalState() {
+            const isReproved = hasAnyDamage();
+            const banner = document.getElementById('statusBanner');
+            const btn = document.getElementById('btnGerarLaudo');
+
+            if (isReproved) {
+                banner.className = 'status-alert-box reproved';
+                banner.textContent = 'STATUS DA INSPEÇÃO: ESCADA REPROVADA (NÃO CONFORMIDADE IDENTIFICADA)';
+                btn.disabled = false;
+            } else {
+                banner.className = 'status-alert-box no-damage';
+                banner.textContent = 'NENHUMA AVARIA APONTADA — EMISSÃO DE LAUDO BLOQUEADA';
+                btn.disabled = true;
+            }
+        }
+
+        function handlePhotoUpload(event, key) {
+            const files = Array.from(event.target.files);
+            const current = statePhotos[key];
+
+            if (current.length + files.length > 5) {
+                alert(`Limite de 5 fotos para ${key.toUpperCase()} excedido! Selecione apenas o restante permitido.`);
+                return;
+            }
+
+            files.forEach(f => {
+                if (current.length >= 5) return;
+                const r = new FileReader();
+                r.onload = (e) => {
+                    current.push(e.target.result);
+                    renderPhotoGrid(key);
+                };
+                r.readAsDataURL(f);
+            });
+            event.target.value = '';
+        }
+
+        function renderPhotoGrid(key) {
+            const grid = document.getElementById(`grid_photos_${key}`);
+            grid.innerHTML = '';
+            statePhotos[key].forEach((src, idx) => {
+                const box = document.createElement('div');
+                box.className = 'photo-thumb-container';
+                box.innerHTML = `
+                    <img src="${src}" alt="Foto ${idx+1}">
+                    <button type="button" class="btn-remove-thumb" onclick="removePhoto('${key}', ${idx})">✕</button>
+                `;
+                grid.appendChild(box);
+            });
+        }
+
+        function removePhoto(key, idx) {
+            statePhotos[key].splice(idx, 1);
+            renderPhotoGrid(key);
+        }
+
+        let canvas, ctx, isDrawing = false;
+
+        function initSignatureCanvas() {
+            canvas = document.getElementById('signatureCanvas');
+            ctx = canvas.getContext('2d');
+
+            function resize() {
+                const rect = canvas.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = 140;
+                ctx.lineWidth = 2.2;
+                ctx.lineCap = 'round';
+                ctx.strokeStyle = '#0f172a';
+            }
+            resize();
+            window.addEventListener('resize', resize);
+
+            canvas.addEventListener('mousedown', (e) => {
+                isDrawing = true;
+                ctx.beginPath();
+                const p = getMousePos(e);
+                ctx.moveTo(p.x, p.y);
+            });
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+                const p = getMousePos(e);
+                ctx.lineTo(p.x, p.y);
+                ctx.stroke();
+            });
+            window.addEventListener('mouseup', () => { isDrawing = false; });
+
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                isDrawing = true;
+                const p = getTouchPos(e);
+                ctx.beginPath();
+                ctx.moveTo(p.x, p.y);
+            }, { passive: false });
+
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                if (!isDrawing) return;
+                const p = getTouchPos(e);
+                ctx.lineTo(p.x, p.y);
+                ctx.stroke();
+            }, { passive: false });
+
+            canvas.addEventListener('touchend', () => { isDrawing = false; });
+        }
+
+        function getMousePos(e) {
+            const r = canvas.getBoundingClientRect();
+            return { x: e.clientX - r.left, y: e.clientY - r.top };
+        }
+
+        function getTouchPos(e) {
+            const r = canvas.getBoundingClientRect();
+            return { x: e.touches[0].clientX - r.left, y: e.touches[0].clientY - r.top };
+        }
+
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function isCanvasBlank(c) {
+            const b = document.createElement('canvas');
+            b.width = c.width;
+            b.height = c.height;
+            return c.toDataURL() === b.toDataURL();
+        }
+
+        function getSelectedTSTName() {
+            const sel = document.getElementById('selectTST').value;
+            if (sel === 'OUTRO') {
+                const custom = document.getElementById('customTST').value.trim();
+                return custom || 'TÉCNICO DE SEGURANÇA DO TRABALHO';
+            }
+            return sel;
+        }
+
+        /**
+         * GERAÇÃO DO LAUDO OFICIAL DISTRIBUINDO FOTOS VERTICAIS (MODO RETRATO) ENTRE PÁG 1 E PÁG 2
+         */
+        function openReportModal() {
+            if (!hasAnyDamage()) {
+                alert("Atenção: Não foram identificadas avarias. O sistema emite EXCLUSIVAMENTE relatórios de REPROVAÇÃO.");
+                return;
+            }
+
+            const lote = document.getElementById('ladderPatrimonio').value.trim() || document.getElementById('searchLote').value.trim();
+            if (!lote) {
+                alert("Informe o Lote / Patrimônio da escada.");
+                return;
+            }
+
+            const docNum = document.getElementById('docNumero').value.trim() || 'N/A';
+            const base = document.getElementById('baseName').value || 'ITAQUERA';
+            const endereco = document.getElementById('baseAddress').value;
+            const inspDate = document.getElementById('inspectionDate').value;
+            const inspTime = document.getElementById('inspectionTime').value;
+            const executor = document.getElementById('respExecutor').value || '-';
+            const re = document.getElementById('respRE').value || '-';
+            const cargo = document.getElementById('respCargo').value || '-';
+            const cc = document.getElementById('centroCusto').value || '-';
+            const lancamento = document.getElementById('dataLancamento').value || '-';
+            const descEquip = document.getElementById('ladderDesc').value;
+            const capacidade = document.getElementById('ladderCapacity').value;
+            const tstFinal = getSelectedTSTName();
+
+            let dataFormatada = inspDate;
+            if (inspDate.includes('-')) {
+                const [y, m, d] = inspDate.split('-');
+                dataFormatada = `${d}/${m}/${y}`;
+            }
+
+            const defectItems = [];
+            const allEvidence = [];
+
+            if (document.querySelector('input[name="avaria_patrimonio"]:checked').value === 'sim') {
+                const d = document.getElementById('desc_patrimonio').value.trim() || 'Ausência ou dano severo na identificação física/rastreabilidade do lote.';
+                defectItems.push(`<strong>Patrimônio / Lote (${lote}):</strong> ${d}`);
+                statePhotos.patrimonio.forEach((src, i) => allEvidence.push({ src, label: `Patrimônio - Foto ${i+1}` }));
+            }
+
+            if (document.querySelector('input[name="avaria_degraus"]:checked').value === 'sim') {
+                const qtd = document.getElementById('qtd_degraus_avariados').value || '1';
+                const d = document.getElementById('desc_degraus').value.trim() || 'Deformação estrutural, trincas ou folga nos rebites dos degraus.';
+                defectItems.push(`<strong>Degraus (${qtd} de 20 danificados):</strong> ${d}`);
+                statePhotos.degraus.forEach((src, i) => allEvidence.push({ src, label: `Degraus - Foto ${i+1}` }));
+            }
+
+            if (document.querySelector('input[name="avaria_montantes"]:checked').value === 'sim') {
+                const d = document.getElementById('desc_montantes').value.trim() || 'Fissuras, delaminação de fibra de vidro ou perda de rigidez/isolamento.';
+                defectItems.push(`<strong>Montantes de Fibra de Vidro:</strong> ${d}`);
+                statePhotos.montantes.forEach((src, i) => allEvidence.push({ src, label: `Montantes - Foto ${i+1}` }));
+            }
+
+            const signatureImg = !isCanvasBlank(canvas) ? canvas.toDataURL() : '';
+
+            // Bloco de Assinatura Centralizado do TST
+            const signatureBlockHtml = `
+                <div class="doc-signature-single-wrap">
+                    <div class="doc-sign-single-box">
+                        ${signatureImg ? `<img src="${signatureImg}" class="sign-preview-img" alt="Assinatura TST">` : '<div style="height:48px;"></div>'}
+                        <strong style="font-size:9pt; color: var(--navy-900);">${escapeHtml(tstFinal)}</strong><br>
+                        <span>Técnico de Segurança do Trabalho — SESMT Responsável</span><br>
+                        <span style="color: var(--gray-700); font-size: 7.5pt;">Inspeção Pericial realizada em: ${dataFormatada} às ${inspTime}</span>
+                    </div>
+                </div>
+            `;
+
+            // =========================================================================
+            // DISTRIBUIÇÃO PROPORCIONAL EM MODO RETRATO ENTRE PÁGINA 1 E PÁGINA 2
+            // =========================================================================
+            let page1Photos = [];
+            let page2Photos = [];
+
+            if (allEvidence.length <= 2) {
+                page1Photos = allEvidence;
+                page2Photos = [];
+            } else {
+                // 2 fotos grandes em modo retrato na Página 1; as demais na Página 2
+                page1Photos = allEvidence.slice(0, 2);
+                page2Photos = allEvidence.slice(2);
+            }
+
+            const totalPages = page2Photos.length > 0 ? 2 : 1;
+
+            // =========================================================================
+            // PÁGINA 1
+            // =========================================================================
+            let html = `
+                <div class="doc-page">
+                    <div class="doc-header">
+                        <div class="doc-brand">
+                            <div class="doc-brand-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M19 3L5 21M19 7L5 7M19 12L5 12M19 17L5 17"/></svg>
+                            </div>
+                            <div class="doc-title-area">
+                                <h2>LAUDO TÉCNICO DE REPROVAÇÃO</h2>
+                                <p>INSPEÇÃO PERICIAL DE ESCADA DE EXTENSÃO</p>
+                            </div>
+                        </div>
+                        <div style="text-align: right; font-size: 7.5pt; color: #334155;">
+                            <p><strong>LOTE:</strong> ${escapeHtml(lote)} | <strong>DOC:</strong> ${escapeHtml(docNum)}</p>
+                            <p><strong>DATA:</strong> ${dataFormatada} às ${inspTime}</p>
+                            <p style="font-weight:700; color:var(--navy-900);">PÁGINA 1 DE ${totalPages}</p>
+                        </div>
+                    </div>
+
+                    <div class="doc-reproval-banner">
+                        STATUS DA INSPEÇÃO: ESCADA REPROVADA
+                    </div>
+
+                    <div class="doc-section-title">1. Dados Cadastrais e Rastreabilidade da Escada (Inventário)</div>
+                    <table class="doc-table">
+                        <tr>
+                            <th>Nº do Lote</th>
+                            <td><strong>${escapeHtml(lote)}</strong></td>
+                            <th>Nº Documento</th>
+                            <td>${escapeHtml(docNum)}</td>
+                        </tr>
+                        <tr>
+                            <th>Descrição</th>
+                            <td>${escapeHtml(descEquip)}</td>
+                            <th>Capacidade / Degraus</th>
+                            <td>${capacidade} • Total 20 Degraus</td>
+                        </tr>
+                        <tr>
+                            <th>Colaborador / Executor</th>
+                            <td>${escapeHtml(executor)} (RE: ${escapeHtml(re)})</td>
+                            <th>Cargo do Executor</th>
+                            <td>${escapeHtml(cargo)}</td>
+                        </tr>
+                        <tr>
+                            <th>Centro de Custo</th>
+                            <td>${escapeHtml(cc)}</td>
+                            <th>Data Lançamento</th>
+                            <td>${escapeHtml(lancamento)}</td>
+                        </tr>
+                        <tr>
+                            <th>Base Operacional</th>
+                            <td>${escapeHtml(base)}</td>
+                            <th>Endereço da Base</th>
+                            <td>${escapeHtml(endereco)}</td>
+                        </tr>
+                    </table>
+
+                    <div class="doc-section-title">2. Referências Normativas Aplicáveis</div>
+                    <div class="doc-quote-box" style="margin-bottom: 0.45rem; font-size: 8pt;">
+                        Avaliação em conformidade com: <strong>ABNT NBR 16308</strong> (Escadas Portáteis - Critérios de Descarte), <strong>NR-35</strong> (Trabalho em Altura - Equipamentos de Acesso), <strong>NR-10</strong> (Segurança em Eletricidade - Rigidez Dielétrica da Fibra de Vidro) e <strong>NR-6</strong> (EPI).
+                    </div>
+
+                    <div class="doc-section-title">3. Parecer Técnico Pericial Automático</div>
+                    <div class="doc-quote-box">
+                        "Durante a inspeção foram identificadas não conformidades que comprometem a segurança, estabilidade e integridade estrutural da escada extensível. Em conformidade com os critérios de inspeção estabelecidos pela ABNT NBR 16308 e requisitos das Normas Regulamentadoras aplicáveis, o equipamento está <strong>REPROVADO</strong> para utilização."
+                    </div>
+
+                    <div class="doc-section-title">4. Detalhamento Consolidado das Não Conformidades Identificadas</div>
+                    <ul class="doc-defects-list">
+                        ${defectItems.map(it => `<li>${it}</li>`).join('')}
+                    </ul>
+
+                    <div class="doc-section-title">5. Conclusão Técnica e Destinação Imediata</div>
+                    <div class="doc-quote-box" style="border-left-color: var(--navy-900);">
+                        "Com base nos resultados obtidos durante a inspeção, a escada deverá ser retirada imediatamente de uso, identificada como <strong>NÃO UTILIZAR</strong> e encaminhada para descarte, substituição ou avaliação técnica especializada."
+                    </div>
+            `;
+
+            // FOTOS NA PÁGINA 1 (EM MODO RETRATO: ALTURA 250PX PREENCHENDO O RESTANTE DA FOLHA)
+            if (page1Photos.length > 0) {
+                const p1Cols = page1Photos.length === 1 ? 1 : 2;
+                html += `
+                    <div class="doc-section-title">6. Registro Fotográfico das Evidências de Avaria</div>
+                    <div class="doc-photo-grid" style="grid-template-columns: repeat(${p1Cols}, 1fr);">
+                        ${page1Photos.map(p => `
+                            <div class="doc-photo-item">
+                                <img src="${p.src}" alt="${p.label}" style="height: 250px;">
+                                <span>${p.label}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+
+            if (page2Photos.length === 0) {
+                html += signatureBlockHtml;
+            }
+
+            html += `</div>`; // fecha doc-page 1
+
+            // =========================================================================
+            // PÁGINA 2 (FOTOS RETRATO PROPORCIONAIS + ASSINATURA TST)
+            // =========================================================================
+            if (page2Photos.length > 0) {
+                // Cálculo de proporção para preencher a Página 2 sem deixar espaços vazios:
+                let p2Cols = 2;
+                let p2Height = "240px";
+
+                if (page2Photos.length <= 4) {
+                    p2Cols = 2;
+                    p2Height = "240px"; // 4 fotos em 2x2 preenchem perfeitamente a página
+                } else if (page2Photos.length <= 6) {
+                    p2Cols = 3;
+                    p2Height = "205px"; // 3 colunas em modo retrato equilibrado
+                } else {
+                    p2Cols = 3;
+                    p2Height = "175px";
+                }
+
+                html += `
+                    <div class="screen-page-divider">--- PÁGINA 2: CONTINUAÇÃO DO REGISTRO FOTOGRÁFICO & ASSINATURA ---</div>
+
+                    <div class="html2pdf__page-break"></div>
+
+                    <div class="doc-page">
+                        <div class="doc-header" style="border-bottom-width: 2px;">
+                            <div class="doc-brand">
+                                <div class="doc-brand-icon" style="width:34px; height:34px; font-size:1rem;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3"><path d="M19 3L5 21M19 7L5 7M19 12L5 12M19 17L5 17"/></svg>
+                                </div>
+                                <div class="doc-title-area">
+                                    <h2 style="font-size:0.95rem;">ANEXO FOTOGRÁFICO DE EVIDÊNCIAS DE AVARIAS</h2>
+                                    <p style="font-size:0.7rem;">COMPLEMENTO TÉCNICO PERICIAL — LAUDO DE REPROVAÇÃO</p>
+                                </div>
+                            </div>
+                            <div style="text-align: right; font-size: 7.5pt; color: #334155;">
+                                <p><strong>LOTE:</strong> ${escapeHtml(lote)} | <strong>DOC:</strong> ${escapeHtml(docNum)}</p>
+                                <p style="font-weight:700; color:var(--navy-900);">PÁGINA 2 DE 2</p>
+                            </div>
+                        </div>
+
+                        <div class="doc-section-title" style="margin-top:0.4rem;">6. Registro Fotográfico Detalhado das Evidências (Continuação)</div>
+                        
+                        <div class="doc-photo-grid" style="grid-template-columns: repeat(${p2Cols}, 1fr);">
+                            ${page2Photos.map(p => `
+                                <div class="doc-photo-item">
+                                    <img src="${p.src}" alt="${p.label}" style="height:${p2Height};">
+                                    <span>${p.label}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+
+                        ${signatureBlockHtml}
+                    </div>
+                `;
+            }
+
+            document.getElementById('printableReportArea').innerHTML = html;
+            document.getElementById('reportModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeReportModal() {
+            document.getElementById('reportModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        /**
+         * BAIXA O PDF NOMEADO COM EXATAMENTE 2 PÁGINAS (SEM FOLHAS EM BRANCO)
+         */
+        function downloadPdfDirectly() {
+            const lote = document.getElementById('ladderPatrimonio').value.trim() || document.getElementById('searchLote').value.trim() || 'SEM_LOTE';
+            const element = document.getElementById('printableReportArea');
+            const btnPdf = document.getElementById('btnPdfModal');
+
+            const originalText = btnPdf ? btnPdf.innerHTML : '';
+            if (btnPdf) {
+                btnPdf.innerHTML = 'Gerando PDF...';
+                btnPdf.disabled = true;
+            }
+
+            const opt = {
+                margin:       [8, 10, 8, 10], // Margem A4 compacta (mm)
+                filename:     `Laudo_Reprovacao_Escada_LOTE_${lote}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { 
+                    scale: 2, 
+                    useCORS: true, 
+                    logging: false,
+                    scrollY: 0
+                },
+                jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+                pagebreak:    { mode: ['css', 'legacy'], before: '.html2pdf__page-break' }
+            };
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                if (btnPdf) {
+                    btnPdf.innerHTML = originalText;
+                    btnPdf.disabled = false;
+                }
+            }).catch(err => {
+                console.error("Erro ao gerar PDF:", err);
+                if (btnPdf) {
+                    btnPdf.innerHTML = originalText;
+                    btnPdf.disabled = false;
+                }
+            });
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return String(str).replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                "'": '&#39;',
+                '"': '&quot;'
+            }[tag] || tag));
+        }
+    </script>
+</body>
+</html>

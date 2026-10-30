@@ -1,1 +1,0 @@
-# INSPE-O-DE-ESCADAS
