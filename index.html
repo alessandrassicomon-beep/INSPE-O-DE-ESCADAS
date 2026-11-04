@@ -568,35 +568,34 @@
         .btn-tool-print { background: var(--navy-700); color: white; }
         .btn-tool-pdf   { background: var(--danger-red); color: white; }
 
-        /* ÁREA DE VISUALIZAÇÃO E CAPTURA DO LAUDO */
+        /* ÁREA DO LAUDO */
         .printable-report {
-            padding: 10px;
+            padding: 12px;
             box-sizing: border-box;
             background: var(--gray-200);
         }
 
-        /* FOLHA A4 PADRÃO (794px x 1120px) */
+        /* CADA FOLHA A4 INDIVIDUAL E PROPORCIONAL */
         .doc-page {
             width: 100%;
             max-width: 794px;
-            min-height: 1120px;
-            max-height: 1120px;
-            margin: 0 auto 15px auto;
+            min-height: 1115px;
             background: #ffffff;
             box-sizing: border-box;
-            padding: 26px 32px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            padding: 24px 30px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
             overflow: hidden;
             position: relative;
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
+            margin: 0 auto 16px auto;
         }
 
         .screen-page-divider {
             text-align: center;
             margin: 10px 0;
-            padding: 6px;
+            padding: 5px;
             background: var(--navy-light);
             color: var(--navy-800);
             font-weight: 800;
@@ -635,7 +634,7 @@
         }
 
         .doc-title-area h2 {
-            font-size: 1.1rem;
+            font-size: 1.05rem;
             font-weight: 900;
             color: var(--navy-900);
             text-transform: uppercase;
@@ -652,35 +651,35 @@
             background: var(--danger-red);
             color: var(--white);
             text-align: center;
-            padding: 0.4rem;
-            font-size: 1rem;
+            padding: 0.35rem;
+            font-size: 0.98rem;
             font-weight: 900;
             letter-spacing: 0.05em;
-            margin: 0.45rem 0;
+            margin: 0.4rem 0;
             border-radius: 4px;
         }
 
         .doc-section-title {
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 800;
             color: var(--navy-900);
             background: var(--gray-100);
             border-left: 4px solid var(--navy-800);
-            padding: 0.2rem 0.4rem;
-            margin: 0.45rem 0 0.3rem 0;
+            padding: 0.18rem 0.4rem;
+            margin: 0.4rem 0 0.25rem 0;
             text-transform: uppercase;
         }
 
         .doc-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 8pt;
-            margin-bottom: 0.4rem;
+            font-size: 7.9pt;
+            margin-bottom: 0.35rem;
         }
 
         .doc-table th, .doc-table td {
             border: 1px solid var(--gray-300);
-            padding: 0.28rem 0.45rem;
+            padding: 0.26rem 0.4rem;
             text-align: left;
         }
 
@@ -695,23 +694,23 @@
             background: var(--gray-50);
             border: 1px solid var(--gray-300);
             border-left: 4px solid var(--danger-red);
-            padding: 0.45rem 0.65rem;
-            font-size: 8.2pt;
+            padding: 0.4rem 0.6rem;
+            font-size: 8pt;
             text-align: justify;
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.35rem;
         }
 
         .doc-defects-list {
             list-style: none;
             padding: 0;
-            margin: 0.3rem 0;
+            margin: 0.25rem 0;
         }
 
         .doc-defects-list li {
             position: relative;
             padding-left: 1.1rem;
-            margin-bottom: 0.25rem;
-            font-size: 8.2pt;
+            margin-bottom: 0.22rem;
+            font-size: 8pt;
             font-weight: 600;
             color: var(--danger-red-dark);
         }
@@ -751,7 +750,7 @@
         }
 
         .doc-photo-item span {
-            font-size: 7.5pt;
+            font-size: 7.4pt;
             font-weight: 800;
             color: var(--navy-900);
             display: block;
@@ -762,10 +761,10 @@
             text-overflow: ellipsis;
         }
 
-        /* ASSINATURA EXCLUSIVA DO TST (RODAPÉ) */
+        /* ASSINATURA EXCLUSIVA DO TST NO RODAPÉ */
         .doc-signature-single-wrap {
             margin-top: auto;
-            padding-top: 10px;
+            padding-top: 8px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -788,7 +787,7 @@
             margin: 0 auto 3px auto;
         }
 
-        /* AJUSTES RESPONSIVOS PARA TELAS PEQUENAS (CELULAR) */
+        /* RESPONSIVO PARA TELAS DE CELULAR */
         @media (max-width: 640px) {
             .grid-2, .grid-3, .grid-4 {
                 grid-template-columns: 1fr;
@@ -805,13 +804,14 @@
             .doc-page {
                 padding: 16px;
                 min-height: auto;
-                max-height: none;
+                box-shadow: none;
+                margin-bottom: 12px;
             }
         }
 
-        /* REGRAS DE IMPRESSÃO NATIVA A4 */
+        /* REGRAS DE IMPRESSÃO E SALVAR PDF NATIVO A4 */
         @media print {
-            body { background: white; padding: 0; }
+            body { background: white !important; padding: 0 !important; }
             .app-header, .container, .modal-toolbar, .screen-page-divider { display: none !important; }
             #reportModal { display: block !important; position: static !important; padding: 0 !important; background: white !important; }
             .modal-container { box-shadow: none !important; max-width: 100% !important; margin: 0 !important; background: white !important; }
@@ -819,9 +819,9 @@
             .doc-page {
                 width: 100% !important;
                 max-width: 100% !important;
-                height: 277mm !important;
-                min-height: 277mm !important;
-                max-height: 277mm !important;
+                height: 275mm !important;
+                min-height: 275mm !important;
+                max-height: 275mm !important;
                 padding: 0 !important;
                 margin: 0 !important;
                 box-shadow: none !important;
@@ -1168,7 +1168,7 @@
         </form>
     </main>
 
-    <!-- MODAL DO LAUDO PRONTO PARA IMPRESSÃO / SALVAR EM PDF (EXATAMENTE 2 PÁGINAS A4) -->
+    <!-- MODAL DO LAUDO PRONTO PARA IMPRESSÃO / SALVAR EM PDF -->
     <div id="reportModal">
         <div class="modal-container">
             <div class="modal-toolbar">
@@ -1176,7 +1176,7 @@
                 <div class="modal-toolbar-btns">
                     <button type="button" class="btn-tool btn-tool-close" onclick="closeReportModal()">Voltar / Editar</button>
                     <button type="button" class="btn-tool btn-tool-print" onclick="window.print()">Imprimir Relatório</button>
-                    <button type="button" class="btn-tool btn-tool-pdf" id="btnPdfModal" onclick="downloadPdfDirectly()">Salvar em PDF</button>
+                    <button type="button" class="btn-tool btn-tool-pdf" id="btnPdfModal" onclick="triggerNativePdfExport()">Salvar em PDF</button>
                 </div>
             </div>
 
@@ -1187,7 +1187,7 @@
         </div>
     </div>
 
-    <!-- JAVASCRIPT: MOTOR COMPLETO -->
+    <!-- JAVASCRIPT: BANCO INDEXEDDB, BUSCA O(1), MOTOR DE EXPORTAÇÃO A4 -->
     <script>
         const defaultInventory = [
             { doc: "POA14847269", produto: "PA01294", desc: "ESCADA DUPLA DE FIBRA 3.60X6.00 M", lote: "100989", rt: "80174148", re: "101169", executor: "HDS TELECOM", cargo: "PRESTADOR", cc: "101005-1029 OBRAS REDE - CONTRATO COMUM", tipo: "RM", qt: "-1", lancamento: "22/09/2023", base: "POÁ" },
@@ -1653,9 +1653,7 @@
                 </div>
             `;
 
-            // =========================================================================
-            // DISTRIBUIÇÃO PROPORCIONAL EM MODO RETRATO ENTRE PÁGINA 1 E PÁGINA 2
-            // =========================================================================
+            // Distribuição: 2 fotos na página 1, restante na página 2
             let page1Photos = [];
             let page2Photos = [];
 
@@ -1750,7 +1748,7 @@
                     </div>
             `;
 
-            // FOTOS NA PÁGINA 1 (EM MODO RETRATO: 250PX PREENCHENDO O RESTANTE DA FOLHA)
+            // FOTOS NA PÁGINA 1 (EM MODO RETRATO: 235PX PREENCHENDO A METADE INFERIOR)
             if (page1Photos.length > 0) {
                 const p1Cols = page1Photos.length === 1 ? 1 : 2;
                 html += `
@@ -1758,7 +1756,7 @@
                     <div class="doc-photo-grid" style="grid-template-columns: repeat(${p1Cols}, 1fr);">
                         ${page1Photos.map(p => `
                             <div class="doc-photo-item">
-                                <img src="${p.src}" alt="${p.label}" style="height: 250px;">
+                                <img src="${p.src}" alt="${p.label}" style="height: 235px;">
                                 <span>${p.label}</span>
                             </div>
                         `).join('')}
@@ -1773,7 +1771,7 @@
             html += `</div>`; // fecha doc-page 1
 
             // =========================================================================
-            // PÁGINA 2 (FOTOS RETRATO PROPORCIONAIS + ASSINATURA TST)
+            // PÁGINA 2
             // =========================================================================
             if (page2Photos.length > 0) {
                 let p2Cols = 2;
@@ -1781,13 +1779,13 @@
 
                 if (page2Photos.length <= 4) {
                     p2Cols = 2;
-                    p2Height = "240px"; // 4 fotos verticais preenchem a página
+                    p2Height = "240px";
                 } else if (page2Photos.length <= 6) {
                     p2Cols = 3;
-                    p2Height = "200px";
+                    p2Height = "190px";
                 } else {
                     p2Cols = 3;
-                    p2Height = "170px";
+                    p2Height = "160px";
                 }
 
                 html += `
@@ -1810,7 +1808,7 @@
                             </div>
                         </div>
 
-                        <div class="doc-section-title">6. Registro Fotográfico Detalhado das Evidências (Continuação)</div>
+                        <div class="doc-section-title" style="margin-top:0.4rem;">6. Registro Fotográfico Detalhado das Evidências (Continuação)</div>
                         
                         <div class="doc-photo-grid" style="grid-template-columns: repeat(${p2Cols}, 1fr);">
                             ${page2Photos.map(p => `
@@ -1837,76 +1835,22 @@
         }
 
         /**
-         * BAIXA O PDF COM CLONE FIXO DE 794px (GARANTE EXATAMENTE 2 PÁGINAS EM QUALQUER CELULAR OU PC)
+         * EXPORTAÇÃO NATIVA E DIRETA DO PDF (SEM FOLHAS EM BRANCO)
          */
-        function downloadPdfDirectly() {
+        function triggerNativePdfExport() {
             const lote = document.getElementById('ladderPatrimonio').value.trim() || document.getElementById('searchLote').value.trim() || 'SEM_LOTE';
-            const element = document.getElementById('printableReportArea');
-            const btnPdf = document.getElementById('btnPdfModal');
-
-            const originalText = btnPdf ? btnPdf.innerHTML : '';
-            if (btnPdf) {
-                btnPdf.innerHTML = 'Gerando PDF...';
-                btnPdf.disabled = true;
-            }
-
-            // Cria um clone invisível com largura fixa de 794px para renderização no celular sem quebras falsas
-            const clone = element.cloneNode(true);
-            clone.style.width = '794px';
-            clone.style.minWidth = '794px';
-            clone.style.maxWidth = '794px';
-            clone.style.position = 'fixed';
-            clone.style.left = '-9999px';
-            clone.style.top = '0';
-            clone.style.zIndex = '-1000';
-            clone.style.background = '#ffffff';
-            clone.style.padding = '0';
-
-            // Remove divisores visuais de tela no PDF
-            clone.querySelectorAll('.screen-page-divider').forEach(el => el.remove());
-
-            // Garante dimensões milimétricas em cada folha do clone
-            clone.querySelectorAll('.doc-page').forEach(page => {
-                page.style.width = '794px';
-                page.style.minHeight = '1120px';
-                page.style.maxHeight = '1120px';
-                page.style.boxShadow = 'none';
-                page.style.margin = '0';
-                page.style.boxSizing = 'border-box';
-                page.style.padding = '24px 32px';
-            });
-
-            document.body.appendChild(clone);
-
-            const opt = {
-                margin:       0, // Margem zero pois a folha já possui padding interno de 32px
-                filename:     `Laudo_Reprovacao_Escada_LOTE_${lote}.pdf`,
-                image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { 
-                    scale: 2, 
-                    useCORS: true, 
-                    logging: false,
-                    width: 794,
-                    windowWidth: 794,
-                    scrollY: 0
-                },
-                jsPDF:        { unit: 'px', format: [794, 1120], orientation: 'portrait', hotfixes: ['px_scaling'] }
-            };
-
-            html2pdf().set(opt).from(clone).save().then(() => {
-                clone.remove();
-                if (btnPdf) {
-                    btnPdf.innerHTML = originalText;
-                    btnPdf.disabled = false;
-                }
-            }).catch(err => {
-                console.error("Erro ao gerar PDF:", err);
-                clone.remove();
-                if (btnPdf) {
-                    btnPdf.innerHTML = originalText;
-                    btnPdf.disabled = false;
-                }
-            });
+            const originalTitle = document.title;
+            
+            // Renomeia o título da janela temporariamente para o navegador salvar o arquivo com o nome certo
+            document.title = `Laudo_Reprovacao_Escada_LOTE_${lote}`;
+            
+            // Chama a caixa de impressão/salvar como PDF nativa (100% perfeita em celular e PC)
+            window.print();
+            
+            // Restaura o título
+            setTimeout(() => {
+                document.title = originalTitle;
+            }, 1000);
         }
 
         function escapeHtml(str) {
